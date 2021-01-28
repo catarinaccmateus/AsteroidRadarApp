@@ -14,7 +14,7 @@ import com.udacity.asteroidradar.R
 import com.udacity.asteroidradar.databinding.AsteroidListItemBinding
 import kotlinx.android.synthetic.main.asteroid_list_item.view.*
 
-class AsteroidListAdapter: ListAdapter<Asteroid, AsteroidListAdapter.ViewHolder>(AsteroidListDiffCallBack()){
+class AsteroidListAdapter(val clickListener: AsteroidItemListener): ListAdapter<Asteroid, AsteroidListAdapter.ViewHolder>(AsteroidListDiffCallBack()){
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -23,15 +23,16 @@ class AsteroidListAdapter: ListAdapter<Asteroid, AsteroidListAdapter.ViewHolder>
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
     val item = getItem(position)
-        holder.bind(item)
+        holder.bind(item, clickListener)
     }
 
     //override fun getItemCount() = listOfAsteroids.size
 
     class ViewHolder private constructor (val binding: AsteroidListItemBinding): RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: Asteroid) {
+        fun bind(item: Asteroid, clickListener: AsteroidItemListener) {
             binding.asteroid = item
+            binding.clickListener = clickListener
             binding.executePendingBindings()
         }
         companion object {
@@ -42,6 +43,7 @@ class AsteroidListAdapter: ListAdapter<Asteroid, AsteroidListAdapter.ViewHolder>
             }
         }
     }
+
 }
 
 
@@ -54,4 +56,8 @@ class AsteroidListDiffCallBack: DiffUtil.ItemCallback<Asteroid>() {
         return oldItem == newItem
     }
 
+}
+
+class AsteroidItemListener(val clickListener: (asteroid: Asteroid) -> Unit) {
+    fun onClick(asteroid: Asteroid) = clickListener(asteroid)
 }
