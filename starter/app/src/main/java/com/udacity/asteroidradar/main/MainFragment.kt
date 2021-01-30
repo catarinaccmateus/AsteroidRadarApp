@@ -1,6 +1,7 @@
 package com.udacity.asteroidradar.main
 
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -27,7 +28,9 @@ class MainFragment : Fragment() {
         })
         binding.asteroidRecycler.adapter = adapter
 
-        viewModel.data.observe(viewLifecycleOwner, Observer {
+        viewModel.getAsteroids()
+
+        viewModel.asteroidsData.observe(viewLifecycleOwner, Observer {
             data ->
             data?.let {
                 adapter.submitList(data)
