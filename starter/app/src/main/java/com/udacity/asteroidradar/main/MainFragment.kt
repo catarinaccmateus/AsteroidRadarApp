@@ -1,14 +1,15 @@
 package com.udacity.asteroidradar.main
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.squareup.picasso.Picasso
 import com.udacity.asteroidradar.R
 import com.udacity.asteroidradar.databinding.FragmentMainBinding
+import java.lang.reflect.Array.get
 
 class MainFragment : Fragment() {
 
@@ -28,7 +29,15 @@ class MainFragment : Fragment() {
         })
         binding.asteroidRecycler.adapter = adapter
 
-        viewModel.getAsteroids()
+        viewModel.pictureOfTheDay.observe(viewLifecycleOwner, Observer {
+            data ->
+            data?.let {
+                Picasso
+                    .get()
+                    .load(data.url)
+                    .into(binding.activityMainImageOfTheDay);
+            }
+        })
 
         viewModel.asteroidsData.observe(viewLifecycleOwner, Observer {
             data ->
