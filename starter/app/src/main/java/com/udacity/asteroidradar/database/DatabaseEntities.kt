@@ -1,9 +1,11 @@
 package com.udacity.asteroidradar.database
 
 import androidx.room.Entity
+import androidx.room.PrimaryKey
 
 @Entity
 data class DatabaseAsteroid constructor(
+    @PrimaryKey
     val id: Long,
     val codename: String,
     val closeApproachDate: String,
@@ -13,3 +15,4 @@ data class DatabaseAsteroid constructor(
     val distanceFromEarth: Double,
     val isPotentiallyHazardous: Boolean
 )
+

@@ -1,21 +1,15 @@
 package com.udacity.asteroidradar.main
 
-import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.udacity.asteroidradar.Asteroid
-import com.udacity.asteroidradar.PictureOfDay
+import android.app.Application
+import androidx.lifecycle.*
+import com.udacity.asteroidradar.data.Asteroid
+import com.udacity.asteroidradar.data.PictureOfDay
 import com.udacity.asteroidradar.api.NasaApi
-import com.udacity.asteroidradar.api.parseAsteroidsJsonResult
-import com.udacity.asteroidradar.Constants
+import com.udacity.asteroidradar.utils.Constants
+import com.udacity.asteroidradar.database.getDatabase
+import com.udacity.asteroidradar.repository.AsteroidApiStatus
+import com.udacity.asteroidradar.repository.AsteroidsRepository
 import kotlinx.coroutines.launch
-import org.json.JSONObject
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import java.text.SimpleDateFormat
 import java.util.*
 
 ///* For testing purposes */
@@ -27,34 +21,47 @@ import java.util.*
 //    Asteroid(2939L, "asteroid1", "2020-11-02", 9399.9, 929202.2, 20202.2, 2020.22, true)
 //    )
 
-enum class AsteroidApiStatus { LOADING, ERROR, DONE }
+
+class MainViewModel (application: Application) : AndroidViewModel(application) {
+
+    /** Creating a database where we will retreive and add data */
+    private val database = getDatabase(application)
 
 
+    /** Creating a repository that will fetch data from network and save it to database
+     * and will also allow to get data from database */
+    private val repository = AsteroidsRepository(database)
 
-class MainViewModel : ViewModel() {
 
-    private val _navigateToAsteroidDetail = MutableLiveData<Asteroid>()
-    val navigateToAsteroidDetail: LiveData<Asteroid>
-        get() = _navigateToAsteroidDetail
-
-    private val _statusListAsteroids = MutableLiveData<AsteroidApiStatus>()
-    val statusListAsteroids: LiveData<AsteroidApiStatus>
-        get() = _statusListAsteroids
-
-    private val _statusPictureDay = MutableLiveData<AsteroidApiStatus>()
-    val statusPictureDay: LiveData<AsteroidApiStatus>
-        get() = _statusPictureDay
-
-    private val _asteroidsData = MutableLiveData<ArrayList<Asteroid>>()
+    /** Data variables */
     val asteroidsData: LiveData<ArrayList<Asteroid>>
-        get() = _asteroidsData
+        get() = repository.asteroids
+
 
     private val _pictureOfTheDay = MutableLiveData<PictureOfDay>()
     val pictureOfTheDay: LiveData<PictureOfDay>
         get() = _pictureOfTheDay
 
+
+    /** API Request Status*/
+    val statusListAsteroids: LiveData<AsteroidApiStatus>
+        get() = repository.apiStatus
+
+    private val _statusPictureDay = MutableLiveData<AsteroidApiStatus>()
+    val statusPictureDay: LiveData<AsteroidApiStatus>
+        get() = _statusPictureDay
+
+
+    /** Navigation status */
+    private val _navigateToAsteroidDetail = MutableLiveData<Asteroid>()
+    val navigateToAsteroidDetail: LiveData<Asteroid>
+        get() = _navigateToAsteroidDetail
+
+
     init {
-        getAsteroids()
+        viewModelScope.launch {
+            repository.refreshAsteroids()
+        }
         getPictureOfTheDay()
     }
 
@@ -72,7 +79,7 @@ class MainViewModel : ViewModel() {
             _statusPictureDay.value = AsteroidApiStatus.LOADING
             try {
               val response = NasaApi.retrofitPictureService.getPictureOfTheDay(Constants.APIKey)
-                response?.let {
+                response.let {
                     _pictureOfTheDay.value = it
                 }
                 _statusPictureDay.value = AsteroidApiStatus.DONE
@@ -84,24 +91,14 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    private fun getAsteroids() {
-        /** Getting current date */
-        val currentTime = Calendar.getInstance().time
-        val dateFormat = SimpleDateFormat(Constants.API_QUERY_DATE_FORMAT, Locale.getDefault())
-        /** API Request */
-        viewModelScope.launch {
-            _statusListAsteroids.value = AsteroidApiStatus.LOADING
-            try {
-               val response =  NasaApi.retrofitAsteroidsService.getAllAsteroids(dateFormat.format(currentTime), Constants.APIKey)
-                response?.let {
-                    val jsonResponse = JSONObject(it)
-                    val data = parseAsteroidsJsonResult(jsonResponse)
-                    _asteroidsData.value = data
-                }
-                _statusListAsteroids.value = AsteroidApiStatus.DONE
-            } catch (e: Exception) {
-                _statusListAsteroids.value = AsteroidApiStatus.ERROR
+
+    class Factory(val app: Application) : ViewModelProvider.Factory {
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
+                @Suppress("UNCHECKED_CAST")
+                return MainViewModel(app) as T
             }
+            throw IllegalArgumentException("Unable to construct MainViewModel")
         }
 
     }

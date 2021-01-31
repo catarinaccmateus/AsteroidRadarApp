@@ -1,16 +1,11 @@
 package com.udacity.asteroidradar.main
 
-import android.text.Layout
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.recyclerview.widget.ListAdapter
-import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.udacity.asteroidradar.Asteroid
-import com.udacity.asteroidradar.R
+import com.udacity.asteroidradar.data.Asteroid
 import com.udacity.asteroidradar.databinding.AsteroidListItemBinding
 import kotlinx.android.synthetic.main.asteroid_list_item.view.*
 

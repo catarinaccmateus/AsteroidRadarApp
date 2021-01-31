@@ -1,8 +1,7 @@
 package com.udacity.asteroidradar.api
 
-import android.util.Log
-import com.udacity.asteroidradar.Asteroid
-import com.udacity.asteroidradar.Constants
+import com.udacity.asteroidradar.data.Asteroid
+import com.udacity.asteroidradar.utils.Constants
 import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.*
@@ -39,7 +38,6 @@ fun parseAsteroidsJsonResult(jsonResult: JSONObject): ArrayList<Asteroid> {
             asteroidList.add(asteroid)
         }
     }
-   Log.i("mainviewmodel", asteroidList.toString())
     return asteroidList
 }
 
