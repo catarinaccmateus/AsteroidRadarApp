@@ -56,7 +56,7 @@ fun bingGetPictureOfDay(imageView: ImageView, url: String?) {
             .get()
             .load(url)
             .placeholder(R.drawable.placeholder_picture_of_day)
-            .into(imageView);
+            .into(imageView)
     }
     imageView.contentDescription = context.getString(R.string.this_is_nasa_s_picture_of_day_showing_nothing_yet)
 }
@@ -72,6 +72,9 @@ fun bindStatus(progressBar: ProgressBar, status: AsteroidApiStatus?) {
         }
         AsteroidApiStatus.DONE -> {
             progressBar.visibility = View.GONE
+        }
+        else -> {
+            progressBar.visibility = View.VISIBLE
         }
     }
 }

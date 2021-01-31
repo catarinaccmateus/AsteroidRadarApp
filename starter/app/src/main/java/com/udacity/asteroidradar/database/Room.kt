@@ -1,10 +1,7 @@
 package com.udacity.asteroidradar.database
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 
 @Dao
 interface AsteroidsDao {
@@ -14,4 +11,6 @@ interface AsteroidsDao {
     fun instertAll(vararg asteroids: DatabaseAsteroid)
     @Query("select * from databaseasteroid where closeApproachDate >= date('now') order by closeApproachDate asc ")
     fun getAllAsteroidsFromToday(): LiveData<List<DatabaseAsteroid>>
+    @Query("delete from databaseasteroid where closeApproachDate < date('now')")
+    fun deleteAsteroidsPreviousDays()
 }

@@ -2,6 +2,7 @@ package com.udacity.asteroidradar
 
 import android.app.Application
 import androidx.work.*
+import com.udacity.asteroidradar.worker.DeletePreviousDataWorker
 import com.udacity.asteroidradar.worker.RefreshDataWorker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -28,15 +29,33 @@ class AsteroidRadarApplication: Application() {
             .setRequiredNetworkType(NetworkType.UNMETERED)
             .build()
 
-        val dailyRequest = PeriodicWorkRequestBuilder<RefreshDataWorker>(1, TimeUnit.DAYS)
+        val fetchDataRequest: PeriodicWorkRequest = PeriodicWorkRequestBuilder<RefreshDataWorker>(1, TimeUnit.DAYS)
             .setConstraints(contraints)
+            .addTag(RefreshDataWorker.WORK_NAME)
             .build()
+
 
         WorkManager.getInstance()
             .enqueueUniquePeriodicWork(
                 RefreshDataWorker.WORK_NAME,
                 ExistingPeriodicWorkPolicy.KEEP,
-                dailyRequest)
+                fetchDataRequest)
     }
+
+    /** Help - How te implement multiple periodic work requests in the same workManager?
+     *
+     *         val deleteDataRequest: PeriodicWorkRequest = PeriodicWorkRequestBuilder<DeletePreviousDataWorker>(1, TimeUnit.DAYS)
+     *          .setConstraints(contraints)
+     *          .addTag(DeletePreviousDataWorker.WORK_NAME)
+     *          .build()
+     *
+     *           Tried this but not sure if it would work:
+     *
+     *           WorkManager.getInstance()
+     *           .enqueue(listOf(fetchDataRequest, deleteDataRequest))
+     *
+     * */
+
+
 
 }
