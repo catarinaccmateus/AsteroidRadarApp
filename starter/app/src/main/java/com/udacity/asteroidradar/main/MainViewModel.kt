@@ -4,11 +4,13 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.udacity.asteroidradar.Asteroid
 import com.udacity.asteroidradar.PictureOfDay
 import com.udacity.asteroidradar.api.NasaApi
 import com.udacity.asteroidradar.api.parseAsteroidsJsonResult
 import com.udacity.asteroidradar.Constants
+import kotlinx.coroutines.launch
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
@@ -60,20 +62,18 @@ class MainViewModel : ViewModel() {
     }
 
     private fun getPictureOfTheDay() {
-    NasaApi.retrofitPictureService.getPictureOfTheDay(Constants.APIKey)
-    .enqueue(object: Callback <PictureOfDay> {
-        override fun onResponse(call: Call<PictureOfDay>, response: Response<PictureOfDay>) {
-            if (response.body() !== null) {
-                _pictureOfTheDay.value = response.body()
+        viewModelScope.launch {
+            try {
+              val response = NasaApi.retrofitPictureService.getPictureOfTheDay(Constants.APIKey)
+                response?.let {
+                    _pictureOfTheDay.value = it
+                }
+
+            } catch (e: Exception) {
+                _apiResponseError.value = true
+
             }
-            _apiResponseError.value = false
         }
-
-        override fun onFailure(call: Call<PictureOfDay>, t: Throwable) {
-            _apiResponseError.value = true
-        }
-
-    })
     }
 
     private fun getAsteroids() {
@@ -81,21 +81,19 @@ class MainViewModel : ViewModel() {
         val currentTime = Calendar.getInstance().time
         val dateFormat = SimpleDateFormat(Constants.API_QUERY_DATE_FORMAT, Locale.getDefault())
         /** API Request */
-        NasaApi.retrofitAsteroidsService.getAllAsteroids(dateFormat.format(currentTime), Constants.APIKey)
-            .enqueue(object: Callback<String> {
-            override fun onResponse(call: Call<String>, response: Response<String>) {
-                if (response.body() !== null) {
-                    val jsonResponse = JSONObject(response.body())
+        viewModelScope.launch {
+            try {
+               val response =  NasaApi.retrofitAsteroidsService.getAllAsteroids(dateFormat.format(currentTime), Constants.APIKey)
+                response?.let {
+                    val jsonResponse = JSONObject(it)
                     val data = parseAsteroidsJsonResult(jsonResponse)
                     _asteroidsData.value = data
                 }
                 _apiResponseError.value = false
-            }
-
-            override fun onFailure(call: Call<String>, t: Throwable) {
+            } catch (e: Exception) {
                 _apiResponseError.value = true
             }
+        }
 
-        })
     }
 }

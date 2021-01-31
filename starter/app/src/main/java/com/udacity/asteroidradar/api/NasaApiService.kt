@@ -29,16 +29,16 @@ private val retrofitNASAPictureOfDay = Retrofit.Builder()
 
 interface NasaApiService {
     @GET("neo/rest/v1/feed")
-    fun getAllAsteroids(
+    suspend fun getAllAsteroids(
         @Query("start_date") startDate: String,
         @Query("api_key") apiKey: String
-    ): Call<String>
+    ): String
     //@Query("end_date") endDate: String, --> Default is always 7 days so there is no need to apply it
 
     @GET("planetary/apod")
-    fun getPictureOfTheDay(
+    suspend fun getPictureOfTheDay(
         @Query("api_key") apiKey: String
-    ): Call<PictureOfDay>
+    ): PictureOfDay
 }
 
 object NasaApi {
