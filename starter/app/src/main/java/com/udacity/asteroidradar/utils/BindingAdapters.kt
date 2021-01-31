@@ -16,10 +16,15 @@ fun bindAsteroidStatusImage(imageView: ImageView, isHazardous: Boolean) {
 
 @BindingAdapter("asteroidStatusImage")
 fun bindDetailsStatusImage(imageView: ImageView, isHazardous: Boolean) {
+    val context = imageView.context
+
     if (isHazardous) {
         imageView.setImageResource(R.drawable.asteroid_hazardous)
+        imageView.contentDescription = context.getString(R.string.potentially_hazardous_asteroid_image)
+
     } else {
         imageView.setImageResource(R.drawable.asteroid_safe)
+        imageView.contentDescription = context.getString(R.string.not_hazardous_asteroid_image)
     }
 }
 
@@ -42,7 +47,8 @@ fun bindTextViewToDisplayVelocity(textView: TextView, number: Double) {
 }
 
 @BindingAdapter("pictureOfDayUrl")
-fun getPictureOfDay(imageView: ImageView, url: String?) {
+fun bingGetPictureOfDay(imageView: ImageView, url: String?) {
+    val context = imageView.context
     url?.let {
         Picasso
             .get()
@@ -50,4 +56,5 @@ fun getPictureOfDay(imageView: ImageView, url: String?) {
             .placeholder(R.drawable.placeholder_picture_of_day)
             .into(imageView);
     }
+    imageView.contentDescription = context.getString(R.string.this_is_nasa_s_picture_of_day_showing_nothing_yet)
 }
