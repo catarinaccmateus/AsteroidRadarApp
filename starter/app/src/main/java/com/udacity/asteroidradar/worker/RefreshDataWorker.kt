@@ -8,6 +8,11 @@ import com.udacity.asteroidradar.repository.AsteroidsRepository
 import retrofit2.HttpException
 
 class RefreshDataWorker (appContext: Context, params: WorkerParameters): CoroutineWorker(appContext, params) {
+
+    companion object {
+        const val WORK_NAME = "RefreshAsteroidsWorker"
+    }
+
     override suspend fun doWork(): Result {
         val database = getDatabase(applicationContext)
         val repository = AsteroidsRepository(database)

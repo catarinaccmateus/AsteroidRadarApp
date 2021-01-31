@@ -1,6 +1,6 @@
 package com.udacity.asteroidradar.api
 
-import com.udacity.asteroidradar.data.Asteroid
+import com.udacity.asteroidradar.Asteroid
 import com.udacity.asteroidradar.database.DatabaseAsteroid
 
 data class NetworkAsteroidContainer(val asteroids: ArrayList<Asteroid>)

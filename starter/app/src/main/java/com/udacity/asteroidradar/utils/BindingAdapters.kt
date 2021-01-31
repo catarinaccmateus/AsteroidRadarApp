@@ -47,6 +47,7 @@ fun getPictureOfDay(imageView: ImageView, url: String?) {
         Picasso
             .get()
             .load(url)
+            .placeholder(R.drawable.placeholder_picture_of_day)
             .into(imageView);
     }
 }

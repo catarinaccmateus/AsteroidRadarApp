@@ -2,7 +2,7 @@ package com.udacity.asteroidradar.main
 
 import android.app.Application
 import androidx.lifecycle.*
-import com.udacity.asteroidradar.data.Asteroid
+import com.udacity.asteroidradar.Asteroid
 import com.udacity.asteroidradar.data.PictureOfDay
 import com.udacity.asteroidradar.api.NasaApi
 import com.udacity.asteroidradar.utils.Constants
@@ -11,16 +11,6 @@ import com.udacity.asteroidradar.repository.AsteroidApiStatus
 import com.udacity.asteroidradar.repository.AsteroidsRepository
 import kotlinx.coroutines.launch
 import java.util.*
-
-///* For testing purposes */
-//val listOfAsteroids: List<Asteroid> = listOf(
-//    Asteroid(2939L, "asteroid1", "2020-11-02", 9399.9, 929202.2, 20202.2, 2020.22, true),
-//    Asteroid(2939L, "asteroid1", "2020-11-02", 9399.9, 929202.2, 20202.2, 2020.22, false),
-//    Asteroid(2939L, "asteroid1", "2020-11-02", 9399.9, 929202.2, 20202.2, 2020.22, true),
-//    Asteroid(2939L, "asteroid1", "2020-11-02", 9399.9, 929202.2, 20202.2, 2020.22, true),
-//    Asteroid(2939L, "asteroid1", "2020-11-02", 9399.9, 929202.2, 20202.2, 2020.22, true)
-//    )
-
 
 class MainViewModel (application: Application) : AndroidViewModel(application) {
 
@@ -44,8 +34,7 @@ class MainViewModel (application: Application) : AndroidViewModel(application) {
 
 
     /** API Request Status*/
-    val statusListAsteroids: LiveData<AsteroidApiStatus>
-        get() = repository.apiStatus
+    val statusListAsteroids =  MutableLiveData<AsteroidApiStatus>(repository.apiStatus)
 
     private val _statusPictureDay = MutableLiveData<AsteroidApiStatus>()
     val statusPictureDay: LiveData<AsteroidApiStatus>
