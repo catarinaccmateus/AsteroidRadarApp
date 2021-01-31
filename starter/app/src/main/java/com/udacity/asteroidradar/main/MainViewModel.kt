@@ -27,6 +27,9 @@ import java.util.*
 //    Asteroid(2939L, "asteroid1", "2020-11-02", 9399.9, 929202.2, 20202.2, 2020.22, true)
 //    )
 
+enum class AsteroidApiStatus { LOADING, ERROR, DONE }
+
+
 
 class MainViewModel : ViewModel() {
 
@@ -34,9 +37,13 @@ class MainViewModel : ViewModel() {
     val navigateToAsteroidDetail: LiveData<Asteroid>
         get() = _navigateToAsteroidDetail
 
-    private val _apiResponseError = MutableLiveData<Boolean>()
-    val apiResponseError: LiveData<Boolean>
-        get() = _apiResponseError
+    private val _statusListAsteroids = MutableLiveData<AsteroidApiStatus>()
+    val statusListAsteroids: LiveData<AsteroidApiStatus>
+        get() = _statusListAsteroids
+
+    private val _statusPictureDay = MutableLiveData<AsteroidApiStatus>()
+    val statusPictureDay: LiveData<AsteroidApiStatus>
+        get() = _statusPictureDay
 
     private val _asteroidsData = MutableLiveData<ArrayList<Asteroid>>()
     val asteroidsData: LiveData<ArrayList<Asteroid>>
@@ -47,7 +54,6 @@ class MainViewModel : ViewModel() {
         get() = _pictureOfTheDay
 
     init {
-        _apiResponseError.value = false
         getAsteroids()
         getPictureOfTheDay()
     }
@@ -63,14 +69,16 @@ class MainViewModel : ViewModel() {
 
     private fun getPictureOfTheDay() {
         viewModelScope.launch {
+            _statusPictureDay.value = AsteroidApiStatus.LOADING
             try {
               val response = NasaApi.retrofitPictureService.getPictureOfTheDay(Constants.APIKey)
                 response?.let {
                     _pictureOfTheDay.value = it
                 }
+                _statusPictureDay.value = AsteroidApiStatus.DONE
 
             } catch (e: Exception) {
-                _apiResponseError.value = true
+                _statusPictureDay.value = AsteroidApiStatus.ERROR
 
             }
         }
@@ -82,6 +90,7 @@ class MainViewModel : ViewModel() {
         val dateFormat = SimpleDateFormat(Constants.API_QUERY_DATE_FORMAT, Locale.getDefault())
         /** API Request */
         viewModelScope.launch {
+            _statusListAsteroids.value = AsteroidApiStatus.LOADING
             try {
                val response =  NasaApi.retrofitAsteroidsService.getAllAsteroids(dateFormat.format(currentTime), Constants.APIKey)
                 response?.let {
@@ -89,9 +98,9 @@ class MainViewModel : ViewModel() {
                     val data = parseAsteroidsJsonResult(jsonResponse)
                     _asteroidsData.value = data
                 }
-                _apiResponseError.value = false
+                _statusListAsteroids.value = AsteroidApiStatus.DONE
             } catch (e: Exception) {
-                _apiResponseError.value = true
+                _statusListAsteroids.value = AsteroidApiStatus.ERROR
             }
         }
 

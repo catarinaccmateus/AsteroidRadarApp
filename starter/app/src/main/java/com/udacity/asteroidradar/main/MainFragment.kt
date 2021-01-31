@@ -29,16 +29,6 @@ class MainFragment : Fragment() {
         })
         binding.asteroidRecycler.adapter = adapter
 
-        viewModel.pictureOfTheDay.observe(viewLifecycleOwner, Observer {
-            data ->
-            data?.let {
-                Picasso
-                    .get()
-                    .load(data.url)
-                    .into(binding.activityMainImageOfTheDay);
-            }
-        })
-
         viewModel.asteroidsData.observe(viewLifecycleOwner, Observer {
             data ->
             data?.let {
