@@ -17,4 +17,5 @@
     <string name="astronomical_unit_explanation_button">Definição de unidade astronómica</string>
     <string name="this_is_nasa_s_picture_of_day_showing_nothing_yet">A imagem da NASA ainda não está a ser mostrada</string>
     <string name="astronomica_unit_explanation">A unidade astronómica é uma medida de duração.</string>
+    <string name="all_asteroids_menu">Todos os asteroides</string>
 </resources>

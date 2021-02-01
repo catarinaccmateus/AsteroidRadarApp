@@ -4,6 +4,7 @@ package com.udacity.asteroidradar.api
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import com.udacity.asteroidradar.data.NetworkPictureOfDay
 import com.udacity.asteroidradar.utils.Constants
 import com.udacity.asteroidradar.data.PictureOfDay
 import kotlinx.coroutines.Deferred
@@ -35,12 +36,12 @@ interface NasaApiService {
         @Query("start_date") startDate: String,
         @Query("api_key") apiKey: String
     ): Deferred<String>
-    //@Query("end_date") endDate: String, --> Default is always 7 days so there is no need to apply it
+    // The default end_date for the query is 7 days so there is no need to apply the Constants.DEFAULT_END_DATE_DAYS
 
     @GET("planetary/apod")
     suspend fun getPictureOfTheDay(
         @Query("api_key") apiKey: String
-    ): PictureOfDay
+    ): NetworkPictureOfDay
 }
 
 object NasaApi {

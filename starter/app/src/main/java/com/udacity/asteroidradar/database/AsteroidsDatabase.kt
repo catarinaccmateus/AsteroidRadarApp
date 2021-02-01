@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [DatabaseAsteroid::class], version = 1)
+@Database(entities = [DatabaseAsteroid::class, DatabasePictureOfDay::class], version = 1)
         abstract class AsteroidsDatabase: RoomDatabase() {
             abstract val asteroidDao: AsteroidsDao
 }

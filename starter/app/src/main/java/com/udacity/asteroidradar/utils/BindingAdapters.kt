@@ -5,7 +5,9 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
+import com.udacity.asteroidradar.main.AsteroidListAdapter
 import com.udacity.asteroidradar.repository.AsteroidApiStatus
 
 @BindingAdapter("statusIcon")
@@ -77,4 +79,10 @@ fun bindStatus(progressBar: ProgressBar, status: AsteroidApiStatus?) {
             progressBar.visibility = View.VISIBLE
         }
     }
+}
+
+@BindingAdapter("listData")
+fun bindRecyclerView(recyclerView: RecyclerView, data: List<Asteroid>?){
+    val adapter = recyclerView.adapter as AsteroidListAdapter
+    adapter.submitList(data)
 }
