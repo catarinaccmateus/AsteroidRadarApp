@@ -12,13 +12,10 @@ fun getCurrentDateAsString(): String {
     return dateFormat.format(currentTime)
 }
 
-fun getLastWeekDayString(): String {
+/** Function to get asteroids from next week */
+fun getNextWeekDayString(): String {
     val calendar = Calendar.getInstance()
-    val currentDay = calendar[Calendar.DAY_OF_WEEK]
-    val leftDays = Calendar.SUNDAY - currentDay
-    calendar.add(Calendar.DATE, leftDays)
+    calendar.add(Calendar.DAY_OF_YEAR, Constants.DEFAULT_END_DATE_DAYS)
     val dateFormat = SimpleDateFormat(Constants.API_QUERY_DATE_FORMAT, Locale.getDefault())
-    /** Help - when filtering it doesnt show any asteroids for the current week, even though it exists.
-     *  Tried to log this date unsuccessfully */
     return dateFormat.format(calendar.time)
 }

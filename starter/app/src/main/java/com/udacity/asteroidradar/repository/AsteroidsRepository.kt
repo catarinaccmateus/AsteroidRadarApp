@@ -11,7 +11,7 @@ import com.udacity.asteroidradar.database.AsteroidsDatabase
 import com.udacity.asteroidradar.api.asDomainModel
 import com.udacity.asteroidradar.data.PictureOfDay
 import com.udacity.asteroidradar.getCurrentDateAsString
-import com.udacity.asteroidradar.getLastWeekDayString
+import com.udacity.asteroidradar.getNextWeekDayString
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
@@ -33,7 +33,7 @@ class AsteroidsRepository(private val database: AsteroidsDatabase) {
      * Getting Asteroids from database and converting it to domain model.
      * */
     val weekAsteroids: LiveData<List<Asteroid>> =
-        Transformations.map(database.asteroidDao.getWeekAsteroids(getLastWeekDayString())) {
+        Transformations.map(database.asteroidDao.getWeekAsteroids(getNextWeekDayString())) {
             it.asDomainModel()
         }
 

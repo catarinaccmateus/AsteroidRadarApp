@@ -18,24 +18,6 @@ class RefreshDataWorker (appContext: Context, params: WorkerParameters): Corouti
         val repository = AsteroidsRepository(database)
         return try {
             repository.refreshAsteroids()
-            Result.success()
-        } catch (e: HttpException) {
-            Result.retry()
-        }
-    }
-
-
-}
-
-class DeletePreviousDataWorker (appContext: Context, params: WorkerParameters): CoroutineWorker(appContext, params) {
-
-    companion object {
-        const val WORK_NAME = "DeletePreviousDataWorker"
-    }
-
-    override suspend fun doWork(): Result {
-        val database = getDatabase(applicationContext)
-        return try {
             database.asteroidDao.deleteAsteroidsPreviousDays()
             Result.success()
         } catch (e: HttpException) {
@@ -45,3 +27,4 @@ class DeletePreviousDataWorker (appContext: Context, params: WorkerParameters): 
 
 
 }
+
