@@ -12,6 +12,8 @@ import com.udacity.asteroidradar.repository.AsteroidsRepository
 import kotlinx.coroutines.launch
 import java.util.*
 
+enum class TimeFrame {TODAY, WEEK, ALL}
+
 class MainViewModel (application: Application) : AndroidViewModel(application) {
 
     /** Creating a database where we will retreive and add data */
@@ -24,22 +26,24 @@ class MainViewModel (application: Application) : AndroidViewModel(application) {
 
 
     /** Data variables */
-    val asteroidsData: LiveData<ArrayList<Asteroid>>
-        get() = repository.asteroids
+    private val timeFrame = MutableLiveData(TimeFrame.ALL)
+    val asteroidsData = Transformations.map(timeFrame) { time ->
+        time?.let {
+            when (time) {
+                TimeFrame.ALL -> repository.asteroids
+                TimeFrame.TODAY -> repository.todayAsteroids
+                TimeFrame.WEEK -> repository.weekAsteroids
+            }
+        }
+    }
 
 
-    private val _pictureOfTheDay = MutableLiveData<PictureOfDay>()
-    val pictureOfTheDay: LiveData<PictureOfDay>
-        get() = _pictureOfTheDay
+    val pictureOfDay = repository.pictureOfDay
 
 
     /** API Request Status*/
-    val statusListAsteroids =  MutableLiveData<AsteroidApiStatus>(repository.apiStatus)
-
-    private val _statusPictureDay = MutableLiveData<AsteroidApiStatus>()
-    val statusPictureDay: LiveData<AsteroidApiStatus>
-        get() = _statusPictureDay
-
+    val statusListAsteroids =  repository.apiStatus
+    val statusPictureDay =  repository.apiPictureStatus
 
     /** Navigation status */
     private val _navigateToAsteroidDetail = MutableLiveData<Asteroid>()
@@ -50,8 +54,8 @@ class MainViewModel (application: Application) : AndroidViewModel(application) {
     init {
         viewModelScope.launch {
             repository.refreshAsteroids()
+            repository.refreshPictureOfTheDay()
         }
-        getPictureOfTheDay()
     }
 
 
@@ -63,21 +67,17 @@ class MainViewModel (application: Application) : AndroidViewModel(application) {
         _navigateToAsteroidDetail.value = null
     }
 
-    private fun getPictureOfTheDay() {
-        viewModelScope.launch {
-            _statusPictureDay.value = AsteroidApiStatus.LOADING
-            try {
-              val response = NasaApi.retrofitPictureService.getPictureOfTheDay(Constants.APIKey)
-                response.let {
-                    _pictureOfTheDay.value = it
-                }
-                _statusPictureDay.value = AsteroidApiStatus.DONE
 
-            } catch (e: Exception) {
-                _statusPictureDay.value = AsteroidApiStatus.ERROR
+    fun getAsteroidsToday() {
+       timeFrame.value = TimeFrame.TODAY
+    }
 
-            }
-        }
+    fun getAsteroidsWeek() {
+        timeFrame.value = TimeFrame.WEEK
+    }
+
+    fun getAllAsteroids() {
+        timeFrame.value = TimeFrame.ALL
     }
 
 
