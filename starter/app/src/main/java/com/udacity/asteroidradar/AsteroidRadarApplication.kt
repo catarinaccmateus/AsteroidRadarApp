@@ -44,6 +44,8 @@ class AsteroidRadarApplication: Application() {
 
     /** Help - How te implement multiple periodic work requests in the same workManager?
      *
+     *         Second PeriodicWorkRequest:
+     *
      *         val deleteDataRequest: PeriodicWorkRequest = PeriodicWorkRequestBuilder<DeletePreviousDataWorker>(1, TimeUnit.DAYS)
      *          .setConstraints(contraints)
      *          .addTag(DeletePreviousDataWorker.WORK_NAME)
