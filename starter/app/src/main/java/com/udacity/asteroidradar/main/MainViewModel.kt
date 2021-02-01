@@ -3,6 +3,7 @@ package com.udacity.asteroidradar.main
 import android.app.Application
 import androidx.lifecycle.*
 import com.udacity.asteroidradar.Asteroid
+import com.udacity.asteroidradar.R
 import com.udacity.asteroidradar.data.PictureOfDay
 import com.udacity.asteroidradar.api.NasaApi
 import com.udacity.asteroidradar.utils.Constants
@@ -37,10 +38,6 @@ class MainViewModel (application: Application) : AndroidViewModel(application) {
         }
     }
 
-
-    val pictureOfDay = repository.pictureOfDay
-
-
     /** API Request Status*/
     val statusListAsteroids =  repository.apiStatus
     val statusPictureDay =  repository.apiPictureStatus
@@ -51,10 +48,29 @@ class MainViewModel (application: Application) : AndroidViewModel(application) {
         get() = _navigateToAsteroidDetail
 
 
+    /** Picture of Day variables */
+    val defaultPictureOfDay = PictureOfDay(
+        "",
+        getApplication<Application>().resources.getString(R.string.this_is_nasa_s_picture_of_day_showing_nothing_yet),
+        ""
+    )
+    val pictureOfDay = repository.pictureOfDay
+    val pictureOfDayWithDefault = MediatorLiveData<PictureOfDay>()
+
+
     init {
         viewModelScope.launch {
             repository.refreshAsteroids()
             repository.refreshPictureOfTheDay()
+        }
+
+        pictureOfDayWithDefault.addSource(pictureOfDay) { value ->
+            if (value != null) {
+                pictureOfDayWithDefault.value = pictureOfDay.value
+            } else {
+                pictureOfDayWithDefault.value = defaultPictureOfDay
+            }
+
         }
     }
 

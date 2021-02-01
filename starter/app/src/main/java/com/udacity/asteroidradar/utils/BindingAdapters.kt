@@ -52,7 +52,6 @@ fun bindTextViewToDisplayVelocity(textView: TextView, number: Double) {
 
 @BindingAdapter("pictureOfDayUrl")
 fun bingGetPictureOfDay(imageView: ImageView, url: String?) {
-    val context = imageView.context
     url?.let {
         Picasso
             .get()
@@ -60,8 +59,8 @@ fun bingGetPictureOfDay(imageView: ImageView, url: String?) {
             .placeholder(R.drawable.placeholder_picture_of_day)
             .into(imageView)
     }
-    imageView.contentDescription = context.getString(R.string.this_is_nasa_s_picture_of_day_showing_nothing_yet)
 }
+
 
 @BindingAdapter("asteroidApiStatus")
 fun bindStatus(progressBar: ProgressBar, status: AsteroidApiStatus?) {
@@ -86,3 +85,13 @@ fun bindRecyclerView(recyclerView: RecyclerView, data: List<Asteroid>?){
     val adapter = recyclerView.adapter as AsteroidListAdapter
     adapter.submitList(data)
 }
+
+//@BindingAdapter("pictureOfDayContentDescription")
+//fun bingGetContentDescription(imageView: ImageView, title: String?) {
+//    val context = imageView.context
+//    if (title.isNullOrEmpty()) {
+//        imageView.contentDescription = title
+//    } else {
+//        imageView.contentDescription = context.getString(R.string.this_is_nasa_s_picture_of_day_showing_nothing_yet)
+//    }
+//}
